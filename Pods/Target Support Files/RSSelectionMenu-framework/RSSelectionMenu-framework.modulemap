@@ -1,0 +1,6 @@
+framework module RSSelectionMenu {
+  umbrella header "RSSelectionMenu-framework-umbrella.h"
+
+  export *
+  module * { export * }
+}

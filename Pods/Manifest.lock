@@ -1,0 +1,60 @@
+PODS:
+  - AASignatureView (1.0)
+  - AdvancedPageControl (0.9.0)
+  - Alamofire (5.8.1)
+  - DropDown (2.3.13)
+  - IQKeyboardManagerSwift (7.0.1)
+  - NVActivityIndicatorView (5.1.1):
+    - NVActivityIndicatorView/Base (= 5.1.1)
+  - NVActivityIndicatorView/Base (5.1.1)
+  - ObjectMapper (4.2.0)
+  - OTPFieldView (1.0.1)
+  - RSSelectionMenu (7.1.3)
+  - SDWebImage (5.18.10):
+    - SDWebImage/Core (= 5.18.10)
+  - SDWebImage/Core (5.18.10)
+  - TTGSnackbar (1.11.1)
+
+DEPENDENCIES:
+  - AASignatureView
+  - AdvancedPageControl
+  - Alamofire
+  - DropDown
+  - IQKeyboardManagerSwift
+  - NVActivityIndicatorView
+  - ObjectMapper
+  - OTPFieldView
+  - RSSelectionMenu
+  - SDWebImage
+  - TTGSnackbar
+
+SPEC REPOS:
+  trunk:
+    - AASignatureView
+    - AdvancedPageControl
+    - Alamofire
+    - DropDown
+    - IQKeyboardManagerSwift
+    - NVActivityIndicatorView
+    - ObjectMapper
+    - OTPFieldView
+    - RSSelectionMenu
+    - SDWebImage
+    - TTGSnackbar
+
+SPEC CHECKSUMS:
+  AASignatureView: f092f7f063ee37b5baf6f4e8ee2f848833cc70aa
+  AdvancedPageControl: 39e3b32b00b2d324c534f8e17cc6c5be9abe84b7
+  Alamofire: 3ca42e259043ee0dc5c0cdd76c4bc568b8e42af7
+  DropDown: 8a2116376c1981888557f72ec2ffc9a5e0e456ec
+  IQKeyboardManagerSwift: 7f6b1b1d1497855d2beea7f2f10ffcc6978525b1
+  NVActivityIndicatorView: 1f6c5687f1171810aa27a3296814dc2d7dec3667
+  ObjectMapper: 1eb41f610210777375fa806bf161dc39fb832b81
+  OTPFieldView: 700a752fe62c41d1c4914c78aa500fb30d97c255
+  RSSelectionMenu: 873d62ebbaef138519f6cf3f073412c2b5d94c2c
+  SDWebImage: fc8f2d48bbfd72ef39d70e981bd24a3f3be53fec
+  TTGSnackbar: fea91c62637b5662f808a4c3b55f7631cb7e1ef7
+
+PODFILE CHECKSUM: 8b4d0dbbd316b9cb2bede6021dd2916288f0aa60
+
+COCOAPODS: 1.15.2

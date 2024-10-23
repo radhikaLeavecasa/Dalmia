@@ -1,0 +1,6 @@
+module AASignatureView {
+  umbrella header "AASignatureView-library-umbrella.h"
+
+  export *
+  module * { export * }
+}
