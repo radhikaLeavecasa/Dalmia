@@ -61,10 +61,31 @@ struct ListingModel: Mappable {
     var vendorId: String?
     var histories: [ListingModel]?
     var siteName: String?
+    var vendor_status: String?
+    var raccePersonImage: String?
+    var raccePersonName: String?
+    var newRaccePersonImage: String?
+    
+    var newImage: String?
+    var newImage1: String?
+    var newImage2: String?
+    var newImage3: String?
+    var newImage4: String?
     
     init?(map: Map) {}
 
     mutating func mapping(map: Map) {
+        
+        newImage <- map["new_image"]
+        newImage1 <- map["new_image1"]
+        newImage2 <- map["new_image2"]
+        newImage3 <- map["new_image3"]
+        newImage4 <- map["new_image4"]
+        
+        newRaccePersonImage <- map["new_racce_person_image"]
+        raccePersonImage <- map["racce_person_image"]
+        raccePersonName <- map["racce_person_name"]
+        vendor_status <- map["vendor_status"]
         siteName <- map["site_name"]
         histories <- map["histories"]
         vendorId <- map["vendor_id"]

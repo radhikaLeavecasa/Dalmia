@@ -29,6 +29,7 @@ struct FetchDataModel: Mappable {
     var zo: String?
     var zone: String?
     var siteName: String?
+    var location: String?
     
     init?(map: Map) {
         // Initialization can be empty
@@ -54,5 +55,6 @@ struct FetchDataModel: Mappable {
         width <- map["width"]
         zo <- map["zo"]
         zone <- map["zone"]
+        location <- map["location"]
     }
 }

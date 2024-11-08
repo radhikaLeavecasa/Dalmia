@@ -46,6 +46,43 @@ class ListingVM: NSObject {
         }
     }
     
+    func rhmRejectedList(_ api:Api, completion: @escaping(Bool, String) -> Void) {
+        Proxy.shared.loadAnimation()
+        arrListing = []
+        WebService.callApi(api: api, method: .get, param: [:], header: true) { status, msg, response in
+            Proxy.shared.stopAnimation()
+            if status == true {
+                if let data = response as? [String:Any] {
+                    if let arrListing = data["data"] as? [[String: Any]] , let data2 = Mapper<ListingModel>().mapArray(JSONArray: arrListing) as [ListingModel]? {
+                        self.arrListing?.append(contentsOf: data2)
+                    }
+                    completion(true, "")
+                }
+            } else {
+                completion(false, msg)
+            }
+        }
+    }
+    
+    func vendorSiteListing(_ api:Api, completion: @escaping(Bool, String) -> Void) {
+        Proxy.shared.loadAnimation()
+        arrListing = []
+        WebService.callApi(api: api, method: .get, param: [:], header: true) { status, msg, response in
+            Proxy.shared.stopAnimation()
+            if status == true {
+                if let data = response as? [String:Any] {
+                    if let arrListing = data["data"] as? [[String: Any]] , let data2 = Mapper<ListingModel>().mapArray(JSONArray: arrListing) as [ListingModel]? {
+                        self.arrListing?.append(contentsOf: data2)
+                    }
+                    completion(true, "")
+                }
+            } else {
+                completion(false, msg)
+            }
+        }
+    }
+    
+    
     func supervisorListingApi(_ api:Api, completion: @escaping(Bool, String) -> Void) {
         Proxy.shared.loadAnimation()
         arrListing = []

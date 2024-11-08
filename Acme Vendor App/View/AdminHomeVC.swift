@@ -67,9 +67,9 @@ class AdminHomeVC: UIViewController {
         txtFldState.text = Cookies.userInfo()?.state
         txtFldZone.text = Cookies.userInfo()?.zone
         txtFldArea.text = Cookies.userInfo()?.area
-        if Cookies.userInfo()?.type == "vendor" {
-            vwASM.isHidden = true
-            vwZO.isHidden = true
+        if Cookies.userInfo()?.type == "vendor" || Cookies.userInfo()?.type == "vendor_executive" {
+//            vwASM.isHidden = true
+//            vwZO.isHidden = true
             txtFldVendorName.text = Cookies.userInfo()?.name
             txtFldVendorName.isUserInteractionEnabled = false
         }
@@ -107,7 +107,7 @@ class AdminHomeVC: UIViewController {
                 self.txtFldHeight.text = dict?.height
                 self.txtFldWidth.text = dict?.width
                 self.txtFldSqFt.text = dict?.total
-                //self.txtFldArea.text = ""
+                self.txtFldSiteName.text = dict?.location
                 self.txtFldZone.text = dict?.zone
                 self.txtFldAsmName.text = dict?.asm
                 self.txtFldCity.text = dict?.city
@@ -115,11 +115,11 @@ class AdminHomeVC: UIViewController {
                 self.txtFldDistrict.text = dict?.district
                 self.txtFldZoName.text = dict?.zo
                 self.txtFldState.text = dict?.state
-                self.txtFldSiteName.text = dict?.siteName
+                //self.txtFldSiteName.text = dict?.siteName
                 self.txtFldLatitude.text = dict?.lat
                 self.txtFldLongitude.text = dict?.long
-//                self.txtFldLatitude.text = dict?.lat
-//                self.txtFldLongitude.text = dict?.long
+                self.txtFldLocation.text = dict?.location
+                self.txtFldYourName.text = Cookies.userInfo()?.name
                 
                 
                 self.txtFldAsmName.isUserInteractionEnabled = self.txtFldAsmName.text == ""
@@ -150,32 +150,62 @@ class AdminHomeVC: UIViewController {
     }
     
     @IBAction func actionAddSitePhoto(_ sender: Any) {
-        ImagePickerManager().openCamera(self) { image in
+        ImagePickerManager().openCamera(self) { [self] image in
             self.imgVwSitePhoto.image = image
             self.lblRetakeSitePhoto.text = "Retake Site Photograph"
             self.lblRetakeSitePhoto.font = UIFont(name: "DMSans18pt-Black", size: 14)
             if(self.locationManager.authorizationStatus == .authorizedWhenInUse ||
                self.locationManager.authorizationStatus == .authorizedAlways) {
                 self.currentLoc = self.locationManager.location
-                self.txtFldLatitude.text = "\(self.currentLoc.coordinate.latitude)"
-                self.txtFldLongitude.text = "\(self.currentLoc.coordinate.longitude)"
+                
+                if let coordinates = convertStringToCLLocationDegrees(latitudeString: self.viewModel.homeModel?.lat ?? "", longitudeString: self.viewModel.homeModel?.long ?? "") {
+                    
+                    let givenLatLong = CLLocationCoordinate2DMake(coordinates.0, coordinates.1) // Example coordinates
+                    let personLatLong = CLLocationCoordinate2D(latitude: self.currentLoc.coordinate.latitude, longitude: self.currentLoc.coordinate.longitude) // Another example
+                    
+                    if self.isWithin200Meters(givenLocation: givenLatLong, personLocation: personLatLong) {
+                        self.txtFldLatitude.text = "\(self.currentLoc.coordinate.latitude)"
+                        self.txtFldLongitude.text = "\(self.currentLoc.coordinate.longitude)"
+                        print("The person is within 200 meters.")
+                    } else {
+                        Proxy.shared.showSnackBar(message: "You are not within 200 meters of the site. Please retry!")
+                    }
+                } else {
+                    self.txtFldLatitude.text = "\(self.currentLoc.coordinate.latitude)"
+                    self.txtFldLongitude.text = "\(self.currentLoc.coordinate.longitude)"
+                }
             }
         }
+    }
+    
+    func convertStringToCLLocationDegrees(latitudeString: String, longitudeString: String) -> (CLLocationDegrees, CLLocationDegrees)? {
+        guard let latitude = Double(latitudeString), let longitude = Double(longitudeString) else {
+            return nil // Return nil if conversion fails
+        }
+        
+        return (latitude, longitude)
     }
     @IBAction func actionStorePhotos(_ sender: UIButton) {
         ImagePickerManager().openCamera(self) { image in
             self.imgVwStorePhoto[sender.tag].image = image
-            self.btnStorePhoto[sender.tag].setTitle("Retake Store Photo \(sender.tag+1)", for: .normal)
             self.btnStorePhoto[sender.tag].titleLabel?.font = UIFont(name: "DMSans18pt-Black", size: 14)
             switch sender.tag {
             case 0:
                 self.cnstHeightStorePhoto1.constant = 80
+                self.btnStorePhoto[sender.tag].setTitle("Retake Far Shot", for: .normal)
+
             case 1:
                 self.cnstHeightStorePhoto2.constant = 80
+                self.btnStorePhoto[sender.tag].setTitle("Retake Near Shot", for: .normal)
+
             case 2:
                 self.cnstHeightStorePhoto3.constant = 80
+                self.btnStorePhoto[sender.tag].setTitle("Retake Left Angle", for: .normal)
+
             case 3:
                 self.cnstHeightStorePhoto4.constant = 80
+                self.btnStorePhoto[sender.tag].setTitle("Retake Right Angle", for: .normal)
+
             default:
                 break
             }
@@ -223,7 +253,7 @@ class AdminHomeVC: UIViewController {
                                                  "zone": txtFldZone.text!,
                                                  "vendor_name": txtFldVendorName.text!,
                                                  "any_damage": txtFldAnyDamage.text!,
-                                                 "zo_name": txtFldZoName.text!,
+                                                 //"zo_name": txtFldZoName.text!,
                                                  "status": "1",
                                                  "total" :"\(area)",
                                                  "site_name": txtFldSiteName.text!,
@@ -238,8 +268,8 @@ class AdminHomeVC: UIViewController {
                                                  
                                                  WSRequestParams.WS_REQS_PARAM_REMARKS: txtxFldRemarks.text ?? "",
                                                  WSRequestParams.WS_REQS_PARAM_CREATED_BY: "\(Cookies.userInfo()?.id ?? 0)",
-                                                 WSRequestParams.WS_REQS_PARAM_AREA: txtFldState.text!,
-                                                 WSRequestParams.WS_REQS_PARAM_ASM_NAME: txtFldAsmName.text!,
+                                                 //WSRequestParams.WS_REQS_PARAM_AREA: txtFldState.text!,
+                                                 //WSRequestParams.WS_REQS_PARAM_ASM_NAME: txtFldAsmName.text!,
                                                  
                                                  WSRequestParams.WS_REQS_PARAM_RACCE_NAME: txtFldYourName.text!,
                                                  WSRequestParams.WS_REQS_PARAM_LOCATION: txtFldLocation.text!,
@@ -280,6 +310,16 @@ class AdminHomeVC: UIViewController {
         }
     }
     //MARK: - Custom method
+    
+    func isWithin200Meters(givenLocation: CLLocationCoordinate2D, personLocation: CLLocationCoordinate2D) -> Bool {
+        let givenCLLocation = CLLocation(latitude: givenLocation.latitude, longitude: givenLocation.longitude)
+        let personCLLocation = CLLocation(latitude: personLocation.latitude, longitude: personLocation.longitude)
+        
+        let distance = givenCLLocation.distance(from: personCLLocation)
+        
+        return distance <= 200.0 // distance is in meters
+    }
+    
     func resetData(){
         self.txtFldSqFt.text = ""
         //        self.txtFldLocation.text = ""
@@ -314,11 +354,11 @@ class AdminHomeVC: UIViewController {
         self.cnstHeightStorePhoto4.constant = 40
         self.cnstHeightSignatureOfOwner.constant = 40
         
-        self.btnStorePhoto[0].setTitle("Store Photo 1", for: .normal)
-        self.btnStorePhoto[1].setTitle("Store Photo 2", for: .normal)
-        self.btnStorePhoto[2].setTitle("Store Photo 3", for: .normal)
-        self.btnStorePhoto[3].setTitle("Store Photo 4", for: .normal)
-        self.btnOwnerSignature.setTitle("Signature of Owner", for: .normal)
+        self.btnStorePhoto[0].setTitle("Far Shot", for: .normal)
+        self.btnStorePhoto[1].setTitle("Near Shot", for: .normal)
+        self.btnStorePhoto[2].setTitle("Left Angle", for: .normal)
+        self.btnStorePhoto[3].setTitle("Right Angle", for: .normal)
+        self.btnOwnerSignature.setTitle("Your Selfie", for: .normal)
         self.lblRetakeSitePhoto.text = "Add Site Photograph"
         
         self.btnOwnerSignature.titleLabel?.font = UIFont(name: "DMSans24pt-Regular", size: 14)

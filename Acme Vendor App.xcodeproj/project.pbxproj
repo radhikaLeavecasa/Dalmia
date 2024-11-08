@@ -53,8 +53,10 @@
 		7271F5222C0DE19400372593 /* ExtensionClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7271F5212C0DE19400372593 /* ExtensionClass.swift */; };
 		7271F5262C0DE4B900372593 /* DMSans_24pt-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 7271F5242C0DE4B900372593 /* DMSans_24pt-Regular.ttf */; };
 		7271F5272C0DE4B900372593 /* DMSans_24pt-Medium.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 7271F5252C0DE4B900372593 /* DMSans_24pt-Medium.ttf */; };
+		7273BF282CD8C73C007ED6E7 /* ImagesOptionsVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7273BF272CD8C73C007ED6E7 /* ImagesOptionsVC.swift */; };
 		7276F3702C8C43030097F428 /* AdminHomeVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7276F36F2C8C43030097F428 /* AdminHomeVC.swift */; };
 		7276F3722C8C46470097F428 /* VendorPanelVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7276F3712C8C46470097F428 /* VendorPanelVC.swift */; };
+		72AA8B492CCB6BBC0063866C /* ViewSiteVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 72AA8B482CCB6BBC0063866C /* ViewSiteVC.swift */; };
 		72D1FBBC2C9D812E0054BE91 /* SiteHistoryVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 72D1FBBB2C9D812E0054BE91 /* SiteHistoryVC.swift */; };
 		72E3D1FC2C12E3AE0041929A /* SignaturePopVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 72E3D1FB2C12E3AE0041929A /* SignaturePopVC.swift */; };
 		72E3D1FF2C13150C0041929A /* OptionsCVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 72E3D1FE2C13150C0041929A /* OptionsCVC.swift */; };
@@ -142,8 +144,10 @@
 		7271F5212C0DE19400372593 /* ExtensionClass.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ExtensionClass.swift; sourceTree = "<group>"; };
 		7271F5242C0DE4B900372593 /* DMSans_24pt-Regular.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "DMSans_24pt-Regular.ttf"; sourceTree = "<group>"; };
 		7271F5252C0DE4B900372593 /* DMSans_24pt-Medium.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "DMSans_24pt-Medium.ttf"; sourceTree = "<group>"; };
+		7273BF272CD8C73C007ED6E7 /* ImagesOptionsVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImagesOptionsVC.swift; sourceTree = "<group>"; };
 		7276F36F2C8C43030097F428 /* AdminHomeVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AdminHomeVC.swift; sourceTree = "<group>"; };
 		7276F3712C8C46470097F428 /* VendorPanelVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VendorPanelVC.swift; sourceTree = "<group>"; };
+		72AA8B482CCB6BBC0063866C /* ViewSiteVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewSiteVC.swift; sourceTree = "<group>"; };
 		72D1FBBB2C9D812E0054BE91 /* SiteHistoryVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SiteHistoryVC.swift; sourceTree = "<group>"; };
 		72E3D1FB2C12E3AE0041929A /* SignaturePopVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignaturePopVC.swift; sourceTree = "<group>"; };
 		72E3D1FE2C13150C0041929A /* OptionsCVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OptionsCVC.swift; sourceTree = "<group>"; };
@@ -202,9 +206,11 @@
 				72F13F6E2CC10ECA00615575 /* VendorLoginVC.swift */,
 				7251E56A2C0EDB3900A900CE /* SplashVC.swift */,
 				72D1FBBB2C9D812E0054BE91 /* SiteHistoryVC.swift */,
+				7273BF272CD8C73C007ED6E7 /* ImagesOptionsVC.swift */,
 				7276F3712C8C46470097F428 /* VendorPanelVC.swift */,
 				72F13F702CC10F3A00615575 /* LoginOptionsVC.swift */,
 				72E3D2022C1316040041929A /* ListingVC.swift */,
+				72AA8B482CCB6BBC0063866C /* ViewSiteVC.swift */,
 				7276F36F2C8C43030097F428 /* AdminHomeVC.swift */,
 				7267F1D22C18558D00F50B65 /* ReminderPopVC.swift */,
 				72EC85532C133A5D00BA6CF7 /* SiteDetailVC.swift */,
@@ -652,6 +658,7 @@
 				72EC855A2C13495100BA6CF7 /* SiteDetailVM.swift in Sources */,
 				72582C9E2C102D1000A4CEF1 /* NVActivityIndicatorPresenter.swift in Sources */,
 				7251E5A02C0F2F4D00A900CE /* String+Timepiece.swift in Sources */,
+				7273BF282CD8C73C007ED6E7 /* ImagesOptionsVC.swift in Sources */,
 				7251E5852C0F241A00A900CE /* OtpVC.swift in Sources */,
 				7271F4F52C0DDC1A00372593 /* HomeVC.swift in Sources */,
 				72039F182C91C4F500E00FAA /* ProfileVM.swift in Sources */,
@@ -686,6 +693,7 @@
 				72E3D2092C131E500041929A /* Cookies.swift in Sources */,
 				72E3D2072C131D580041929A /* ListingModel.swift in Sources */,
 				7271F4F12C0DDC1A00372593 /* AppDelegate.swift in Sources */,
+				72AA8B492CCB6BBC0063866C /* ViewSiteVC.swift in Sources */,
 				7251E5782C0EE7AB00A900CE /* Proxy.swift in Sources */,
 				72582CA22C102D6700A4CEF1 /* WWCalendarTimeSelector.swift in Sources */,
 				7251E5872C0F252800A900CE /* LoginVM.swift in Sources */,

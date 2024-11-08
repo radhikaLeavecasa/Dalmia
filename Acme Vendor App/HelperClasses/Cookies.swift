@@ -39,6 +39,11 @@ extension NSDictionary {
         return fullName
     }
     
+    var email:String{
+        let email = self["email"] as? String ?? ""
+        return email
+    }
+    
     var notification_setting: Int{
         let notification_setting = self["notification_setting"] as? Int ?? 0
         return notification_setting
@@ -68,60 +73,12 @@ class Cookies {
         return nil
     }
     
-//    class func saveUserToken(token: String) {
-//        UserDefaults.standard.set(token, forKey: CommonParam.DEVICE_TOKEN)
-//    }
-//    
-//    class func saveUserCredit(token: String) {
-//        UserDefaults.standard.set(token, forKey: "Passes")
-//    }
-    
-//    class func saveIntro(bool: Bool) {
-//        UserDefaults.standard.set(bool, forKey: CommonParam.INTRO_DONE)
-//    }
-    
-//    class func saveDeviceToken(token: String) {
-//        UserDefaults.standard.set(token, forKey: "deviceToken")
-//    }
-//    
-//    class func saveUserTokenId(tokenId: Int) {
-//        UserDefaults.standard.set(tokenId, forKey: "UserTokenId")
-//    }
-//    
-//    class func getUserTokenId() -> Int {
-//        if let token = UserDefaults.standard.value(forKey: "UserTokenId") as? Int {
-//            return token
-//        }
-//        return 0
-//    }
-    
-//    class func getInto() -> Bool {
-//        if let intro = UserDefaults.standard.value(forKey: CommonParam.INTRO_DONE) as? Bool {
-//            return intro
-//        }
-//        return false
-//    }
-    
-//    class func getDeviceToken() -> String {
-//        if let token = UserDefaults.standard.value(forKey: "deviceToken") as? String {
-//            return token
-//        }
-//        return "123"
-//    }
-    
     class func getUserToken() -> String {
         if let token = UserDefaults.standard.value(forKey: WSResponseParams.WS_RESP_PARAM_ACCESS_TOKEN) as? String {
             return token
         }
         return ""
     }
-    
-//    class func getUserCredit() -> String {
-//        if let token = UserDefaults.standard.value(forKey: "Passes") as? String {
-//            return token
-//        }
-//        return ""
-//    }
     
     class func deleteUserInfo() {
         UserDefaults.standard.removeObject(forKey: "userInfoSave")
@@ -132,27 +89,3 @@ class Cookies {
     }
 }
 
-//var currentAccessToken :String? {
-//    get {
-//        return UserDefaults.standard.currentAccessToken()
-//    }
-//    set {
-//        UserDefaults.standard.currentAccessToken(newValue)
-//    }
-//}
-
-//extension UserDefaults {
-//    
-//    /// Private key for persisting the active Theme in UserDefaults
-//    private static let currentAccessTokenKey = "AuthToken"
-//    
-//    /// Retreive theme identifer from UserDefaults
-//    public func currentAccessToken() -> String? {
-//        return self.string(forKey: UserDefaults.currentAccessTokenKey)
-//    }
-//    
-//    /// Save theme identifer to UserDefaults
-//    public func currentAccessToken(_ identifier: String?) {
-//        self.set(identifier, forKey: UserDefaults.currentAccessTokenKey)
-//    }
-//}

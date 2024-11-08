@@ -17,7 +17,7 @@ extension Api {
 }
 
 enum Api: Equatable {
-    
+    case rhmRejectedList(_ name: String)
     case fetchApi(_ code: String, userID: String)
     case uploadSiteDetails
     case logout
@@ -27,27 +27,47 @@ enum Api: Equatable {
     case vendorProjectList(_ name: String)
     case asmProjectList(_ name: String)
     case clientProjectListing
-    //case zoProjectList(_ name: String)
+    case rhmClientProjectListing(_ zone: String)
+    case vendorExecutiveProjectList(_ name: String)
     case outsourceProjectList(_ name: String)
     case vendorList
     case updateProject(_ id: Int)
     case userApi
     case notification(_ name: String)
-    
     case getStateByCityVendor(_ city: String, vendor: String)
     case getCityByStateVendor(_ state: String, vendor: String)
     case getVendorByStateCity(_ state: String, city: String)
-//    case asmSitePending(_ name: String)
-//    
-//    case supervisorListing(_ code: Int)
-//    case supervisorApproved(_ code: Int)
-//    case supervisorRejected(_ code: Int)
-//    case supervisorPending(_ code: Int)
-//    
-//    case acceptReject
+    case vendorAcceptReject(_ projectId: String, createdBy: String, status: String)
+    case clientAcceptReject(_ projectId: String, createdBy: String, status: String)
+    
+    case vendorPendingSite(_ name: String)
+    case vendorApprovedSite(_ name: String)
+    case vendorRejectedSite(_ name: String)
+    
+    case rhmPendingSite(_ name: String)
+    case rhmApprovedSite(_ name: String)
+    case rhmRejectedSite(_ name: String)
    
     func rawValued() -> String {
         switch self {
+        case let .rhmRejectedList(name):
+            return "rhm-rejected-site-for-vendor/\(name)"
+        case let .vendorPendingSite(name):
+            return "vendor-pending-sites/\(name)"
+        case let .vendorApprovedSite(name):
+            return "vendor-approved-sites/\(name)"
+        case let .vendorRejectedSite(name):
+            return "vendor-rejected-sites/\(name)"
+            
+        case let .rhmPendingSite(name):
+            return "rhm-pending-sites/\(name)"
+        case let .rhmApprovedSite(name):
+            return "rhm-approved-sites/\(name)"
+        case let .rhmRejectedSite(name):
+            return "rhm-rejected-sites/\(name)"
+            
+        case let .rhmClientProjectListing(zone):
+            return "rhm-project/\(zone)"
         case .fetchApi(let code, let id):
             return "get-site/\(code)/\(id)"
         case .uploadSiteDetails:
@@ -82,6 +102,12 @@ enum Api: Equatable {
             return "get-city-by-state-and-vendor/\(state)/\(vendor)"
         case let .getVendorByStateCity(state, city):
             return "get-vendor-by-city-and-state/\(state)/\(city)"
+        case let .vendorExecutiveProjectList(name):
+            return "vendor-executive-project/\(name)"
+        case let .vendorAcceptReject(projectId, createdBy, status):
+            return "update-vendor-status/\(projectId)/\(createdBy)/\(status)"
+        case let .clientAcceptReject(projectId, createdBy, status):
+            return "update-client-status/\(projectId)/\(createdBy)/\(status)"
         }
     }
 }

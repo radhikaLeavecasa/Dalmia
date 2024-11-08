@@ -21,7 +21,7 @@ class OtpVM: NSObject {
                     completion(true, "")
                 }
             } else {
-                completion(false, "\(msg) Please recheck the OTP")
+                completion(false, "\(msg)")
             }
         }
     }

@@ -65,35 +65,35 @@ class ImagePickerManager: NSObject, UIImagePickerControllerDelegate, UINavigatio
     
     func openSelfieCamera(_ viewController: UIViewController, _ callback: @escaping ((UIImage?) -> Void)) {
         
-        alert.dismiss(animated: true, completion: nil)
-        
-        let cameraVC = CustomCameraViewController()
-        cameraVC.photoCaptureCompletion = callback
-        viewController.present(cameraVC, animated: true, completion: nil)
-        
-        // Dismiss any existing alert (if applicable)
 //        alert.dismiss(animated: true, completion: nil)
 //        
-//        if UIImagePickerController.isSourceTypeAvailable(.camera) {
-//            let picker = UIImagePickerController()
-//            picker.sourceType = .camera
-//            picker.cameraDevice = .front  // Set to use the front camera
-//            picker.delegate = self // Make sure your class conforms to UIImagePickerControllerDelegate & UINavigationControllerDelegate
-//            picker.showsCameraControls = true
-//            picker.allowsEditing = false
-//            picker.
-//            pickImageCallback = callback
-//            
-//            viewController.present(picker, animated: true, completion: nil)
-//        } else {
-//            let alertController: UIAlertController = {
-//                let controller = UIAlertController(title: "Warning", message: "You don't have a camera", preferredStyle: .alert)
-//                let action = UIAlertAction(title: "OK", style: .default)
-//                controller.addAction(action)
-//                return controller
-//            }()
-//            viewController.present(alertController, animated: true)
-//        }
+//        let cameraVC = CustomCameraViewController()
+//        cameraVC.photoCaptureCompletion = callback
+//        viewController.present(cameraVC, animated: true, completion: nil)
+        
+        // Dismiss any existing alert (if applicable)
+        alert.dismiss(animated: true, completion: nil)
+        
+        if UIImagePickerController.isSourceTypeAvailable(.camera) {
+            let picker = UIImagePickerController()
+            picker.sourceType = .camera
+            picker.cameraDevice = .front  // Set to use the front camera
+            picker.delegate = self
+            picker.showsCameraControls = true
+            picker.allowsEditing = false
+           
+            pickImageCallback = callback
+            
+            viewController.present(picker, animated: true, completion: nil)
+        } else {
+            let alertController: UIAlertController = {
+                let controller = UIAlertController(title: "Warning", message: "You don't have a camera", preferredStyle: .alert)
+                let action = UIAlertAction(title: "OK", style: .default)
+                controller.addAction(action)
+                return controller
+            }()
+            viewController.present(alertController, animated: true)
+        }
     }
     
     func openGallery(){

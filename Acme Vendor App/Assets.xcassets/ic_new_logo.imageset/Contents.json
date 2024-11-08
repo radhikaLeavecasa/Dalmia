@@ -1,7 +1,6 @@
 {
   "images" : [
     {
-      "filename" : "padlock-4.png",
       "idiom" : "universal",
       "scale" : "1x"
     },
@@ -10,6 +9,7 @@
       "scale" : "2x"
     },
     {
+      "filename" : "WhatsApp Image 2024-11-06 at 10.43.39 AM 1.jpeg",
       "idiom" : "universal",
       "scale" : "3x"
     }

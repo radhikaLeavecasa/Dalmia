@@ -133,13 +133,13 @@ struct CommonError{
 }
 
 struct CommonMessage {
-    static let REJECTED_SUCCESS = "Signage board details have been rejected"
+    static let REJECTED_SUCCESS = "Details have been rejected!"
     static let REJECT_DETAILS = "Are you sure you want to reject these details?"
-    static let APPROVED_SUCCESSFULLY = "Signage board details Approve successfully!"
+    static let APPROVED_SUCCESSFULLY = "Details Approved successfully!"
     static let CANCEL = "Cancel"
     static let REJECT = "Reject"
     static let APPROVE = "Approve"
-    static let APPROVE_DETAILS = "Are you sure you want to approve these details?"
+    static let APPROVE_DETAILS = "Are you sure you want to approve this site?"
     static let ACME_VENDOR = "Acme Vendor"
     static let LOGGED_OUT = "Logged out successfully!"
     static let NO_INTERNET_CONNECTION = "No Internet Connection"

@@ -190,7 +190,7 @@ class HomeVC: UIViewController, UIImagePickerControllerDelegate & UINavigationCo
                                              WSRequestParams.WS_REQS_PARAM_CREATED_BY: "\(Cookies.getUserToken())",
                                              WSRequestParams.WS_REQS_PARAM_LOCATION: txtFldLocation.text!,
                                              WSRequestParams.WS_REQS_PARAM_AREA: "\(area)",
-                                             WSRequestParams.WS_REQS_PARAM_ASM_NAME: txtFldAsmName.text!,
+                                            // WSRequestParams.WS_REQS_PARAM_ASM_NAME: txtFldAsmName.text!,
 //                                             WSRequestParams.WS_REQS_PARAM_DIVISION: viewModel.homeModel?.division ?? "",
 //                                             WSRequestParams.WS_REQS_PARAM_RETAILER_CODE: viewModel.homeModel?.retailerCode ?? "",
 //                                             WSRequestParams.WS_REQS_PARAM_ASM_MOBILE:txtFldAsmNumber.text!,
@@ -309,10 +309,12 @@ class HomeVC: UIViewController, UIImagePickerControllerDelegate & UINavigationCo
         } else if txtFldYourName.text?.isEmptyCheck() == true {
             Proxy.shared.showSnackBar(message: CommonMessage.ENTER_YOUR_NAME)
             return false
-        } else if txtFldAsmName.text?.isEmptyCheck() == true {
-            Proxy.shared.showSnackBar(message: CommonMessage.ENTER_ASM_NAME)
-            return false
-        } else if txtFldAsmNumber.text?.isEmptyCheck() == true {
+        } 
+//        else if txtFldAsmName.text?.isEmptyCheck() == true {
+//            Proxy.shared.showSnackBar(message: CommonMessage.ENTER_ASM_NAME)
+//            return false
+//        } 
+        else if txtFldAsmNumber.text?.isEmptyCheck() == true {
             Proxy.shared.showSnackBar(message: CommonMessage.ENTER_ASM_NUMBER)
             return false
         } else if txtFldLocation.text?.isEmptyCheck() == true {
