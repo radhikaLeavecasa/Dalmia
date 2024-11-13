@@ -72,9 +72,13 @@ struct ListingModel: Mappable {
     var newImage3: String?
     var newImage4: String?
     
+    var imageLastUpdatedDate: String?
+     
     init?(map: Map) {}
 
     mutating func mapping(map: Map) {
+        
+        imageLastUpdatedDate <- map["image_last_updated_date"]
         
         newImage <- map["new_image"]
         newImage1 <- map["new_image1"]

@@ -47,9 +47,14 @@ enum Api: Equatable {
     case rhmPendingSite(_ name: String)
     case rhmApprovedSite(_ name: String)
     case rhmRejectedSite(_ name: String)
+    
+    case getReminderCodeDetail(_ id: String)
    
     func rawValued() -> String {
         switch self {
+            
+        case let .getReminderCodeDetail(id):
+            return "project/\(id)"
         case let .rhmRejectedList(name):
             return "rhm-rejected-site-for-vendor/\(name)"
         case let .vendorPendingSite(name):

@@ -8,6 +8,9 @@
 import UIKit
 
 class SiteDetailVM: NSObject {
+    
+    var dict: ListingModel?
+    
     func acceptRejectApi(_ api: Api, param:[String:AnyObject], _ completion: @escaping (Bool,String) -> Void) {
         Proxy.shared.loadAnimation()
         WebService.callApi(api: api, method: .post, param: param, header: true) { status, msg, response in
@@ -42,6 +45,25 @@ class SiteDetailVM: NSObject {
             Proxy.shared.stopAnimation()
             if status == true {
                 if let data = response as? [String:Any] {
+                    completion(true, msg)
+                }
+            }else{
+                completion(false, msg)
+            }
+        }
+    }
+    
+    func siteDetails(id: String, param:[String:Any], _ completion: @escaping (Bool,String) -> Void){
+        Proxy.shared.loadAnimation()
+        WebService.callApi(api: .getReminderCodeDetail(id), method: .get, param: param, header: true) { status, msg, response in
+            Proxy.shared.stopAnimation()
+            if status == true {
+                if let data = response as? [String:Any] {
+                    
+                        if let list = data["data"] as? [String: Any] {
+                            self.dict = ListingModel(JSON: list)
+                        }
+                    
                     completion(true, msg)
                 }
             }else{

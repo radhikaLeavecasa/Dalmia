@@ -13,9 +13,9 @@ class ReminderPopVC: UIViewController {
     @IBOutlet weak var collVwVCodes: UICollectionView!
     @IBOutlet weak var lblTitle: UILabel!
     //MARK: - Variables
-    var arrCode = [String]()
+    var arrCode = [(String,String)]()
     //MARK: - Variables
-    typealias remarks = (_ remarks: String) -> Void
+    typealias remarks = (_ code: String, _ id: String) -> Void
     var remarksDelegate: remarks? = nil
     //MARK: - Lifecycle methods
     override func viewDidLoad() {
@@ -36,7 +36,7 @@ extension ReminderPopVC: UICollectionViewDelegate, UICollectionViewDataSource, U
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "SiteCVC", for: indexPath) as! SiteCVC
-        cell.btnCodeName.setTitle(arrCode[indexPath.row], for: .normal)
+        cell.btnCodeName.setTitle(arrCode[indexPath.row].0, for: .normal)
         return cell
     }
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
@@ -45,7 +45,7 @@ extension ReminderPopVC: UICollectionViewDelegate, UICollectionViewDataSource, U
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         guard let code = self.remarksDelegate else { return }
-        code(arrCode[indexPath.row])
+        code(arrCode[indexPath.row].0, arrCode[indexPath.row].1)
         dismiss(animated: true)
     }
 }

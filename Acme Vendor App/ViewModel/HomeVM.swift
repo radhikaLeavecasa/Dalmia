@@ -13,7 +13,7 @@ class HomeVM: NSObject {
     
     var homeModel: FetchDataModel?
     var arrVendorList: [VendorListModule]?
-    var arrCode: [String]?
+    var arrCode: [(String, String)]?
     
     func fetchApi(_ code: String, id: String, _ completion: @escaping (Bool,String) -> Void) {
         Proxy.shared.loadAnimation()
@@ -64,12 +64,11 @@ class HomeVM: NSObject {
                 self.arrCode = [] // Clear previous codes
                 
                 for item in arrListing {
-                    if let code = item["code"] as? String {
-                        self.arrCode?.append(code)
+                    if let code = item["code"] as? String, let id = item["id"] as? Int {
+                        self.arrCode?.append((code,"\(id)"))
                     }
                 }
                 
-                debugPrint(self.arrCode) // Print the full array after processing
                 // Call completion only once, after processing all items
                 completion(true, "")
             } else {

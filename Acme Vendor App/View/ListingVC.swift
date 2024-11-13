@@ -41,18 +41,26 @@ class ListingVC: UIViewController {
     let dropDown = DropDown()
     let homeViewModel = HomeVM()
     var arrVendorState = [String]()
-    var arrHeader = ["All","Pending","Approved","Rejected", "RHM Rejected"]
+    var arrHeader = ["All","Pending","Approved","Rejected", "RMH Rejected"]
     //MARK: - Lifecycle methods
     override func viewDidLoad() {
+        callReminderAPi()
+    }
+    
+    func callReminderAPi() {
         homeViewModel.reminderApi { val, msg in
             if val {
                 if let vc = ViewControllerHelper.getViewController(ofType: .ReminderPopVC, StoryboardName: .Main) as? ReminderPopVC {
                     vc.modalPresentationStyle = .overFullScreen
                     vc.modalTransitionStyle = .crossDissolve
                     vc.arrCode = self.homeViewModel.arrCode ?? []
-                    vc.remarksDelegate = { code in
-                        let vc = ViewControllerHelper.getViewController(ofType: .AdminHomeVC, StoryboardName: .Main) as! AdminHomeVC
-                        vc.code = code
+                    vc.remarksDelegate = { code, id in
+                        let vc = ViewControllerHelper.getViewController(ofType: .SiteDetailVC, StoryboardName: .Main) as! SiteDetailVC
+                        vc.id = id
+                        vc.siteUpdatedDelegate = {
+                            val in
+                            self.callReminderAPi()
+                        }
                         self.pushView(vc: vc, title: "Reminder")
                     }
                     self.present(vc, animated: true)
@@ -72,7 +80,7 @@ class ListingVC: UIViewController {
         collVwHeightTopOptions.constant = Cookies.userInfo()?.type == "vendor" || Cookies.userInfo()?.type == "rhm" ? 45 : 0
         collVwOptions.isHidden = Cookies.userInfo()?.type != "vendor" && Cookies.userInfo()?.type != "rhm"
         constCollVwOptionTop.constant = Cookies.userInfo()?.type == "vendor" || Cookies.userInfo()?.type == "rhm" ? 10 : 0
-        lblType.text = "\(Cookies.userInfo()?.type.capitalized ?? "") - \(Cookies.userInfo()?.name ?? "")"
+        lblType.text = (Cookies.userInfo()?.type.capitalized ?? "") == "Rhm" ? "RMH - \(Cookies.userInfo()?.name ?? "")" : "\(Cookies.userInfo()?.type.capitalized ?? "") - \(Cookies.userInfo()?.name ?? "")"
         homeViewModel.vendorListApi { val, msg in
             if val {
                 self.arrVendorList2 = self.homeViewModel.arrVendorList

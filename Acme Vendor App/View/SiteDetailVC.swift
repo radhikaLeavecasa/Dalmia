@@ -8,6 +8,7 @@
 import UIKit
 import AdvancedPageControl
 import SDWebImage
+import DropDown
 import CoreLocation
 
 class SiteDetailVC: UIViewController {
@@ -51,53 +52,71 @@ class SiteDetailVC: UIViewController {
     @IBOutlet weak var collVwImages: UICollectionView!
     @IBOutlet weak var btnReject: UIButton!
     //MARK: - Variables
+    let dropDown = DropDown()
+    var arrAnyDamage = ["Yes", "No"]
     var viewModel = SiteDetailVM()
     var arrImages: [String] = []
     var locationManager = CLLocationManager()
     var arrNewImages: [(String,UIImage)] = []
     var currentLoc: CLLocation!
     var siteDetail: ListingModel?
+    var id: String?
+
+    typealias siteUpdated = (_ status: Bool) -> Void
+    var siteUpdatedDelegate: siteUpdated? = nil
+    
     //MARK: - Lifecycle method
     override func viewDidLoad() {
         super.viewDidLoad()
         setData()
-        if Cookies.userInfo()?.type == "vendor" {
-            btnReject.isHidden = siteDetail?.vendor_status == "Accepted"
-            btnApprove.isHidden = siteDetail?.vendor_status == "Rejected"
-            siteDetail?.vendor_status == "Accepted" ? btnApprove.setTitle("Approved", for: .normal) : btnApprove.setTitle("Approve", for: .normal)
-            btnApprove.isUserInteractionEnabled = siteDetail?.vendor_status != "Accepted"
-            
-            siteDetail?.vendor_status == "Rejected" ? btnReject.setTitle("Rejected", for: .normal) : btnReject.setTitle("Reject", for: .normal)
-            btnReject.isUserInteractionEnabled = siteDetail?.vendor_status != "Rejected"
-        } else if Cookies.userInfo()?.type == "rhm" {
-            btnReject.isHidden = siteDetail?.clientStatus == "Accepted"
-            btnApprove.isHidden = siteDetail?.clientStatus == "Rejected"
-            siteDetail?.clientStatus == "Accepted" ? btnApprove.setTitle("Approved", for: .normal) : btnApprove.setTitle("Approve", for: .normal)
-            btnApprove.isUserInteractionEnabled = siteDetail?.clientStatus != "Accepted"
-            
-            siteDetail?.clientStatus == "Rejected" ? btnReject.setTitle("Rejected", for: .normal) : btnReject.setTitle("Reject", for: .normal)
-            btnReject.isUserInteractionEnabled = siteDetail?.clientStatus != "Rejected"
-        }
-        cnstHeightBottomStack.constant = Cookies.userInfo()?.type != "rhm" && Cookies.userInfo()?.type != "vendor" ? 0 : 55
-        vwStackView.isHidden = Cookies.userInfo()?.type != "rhm" && Cookies.userInfo()?.type != "vendor"
     }
     //MARK: - Custom method
     func setData(){
-        if Cookies.userInfo()?.type == "vendor" || Cookies.userInfo()?.type == "vendor_executive" {
-//            vwAsm.isHidden = true
-//            vwZO.isHidden = true
-        }
-        
-        //UPDATED IMAGES CODE
         vwSecond.isHidden = true
         cnstHeightImagesSec.constant = 0
         pgControlSecond.isHidden = true
         vwRecceImgSecond.isHidden = true
         cnstHeightRecceImgSec.constant = 0
         
+        if title == "Reminder" {
+            viewModel.siteDetails(id: id ?? "", param: [:]) { val, msg in
+                self.siteDetail = self.viewModel.dict
+                self.setValues()
+                self.btnEdit.isSelected = true
+                self.manageData(true)
+                self.collVwImages.reloadData()
+            }
+        } else {
+            //UPDATED IMAGES CODE
+            setValues()
+        }
+    }
+    
+    func setValues() {
+        
+        if Cookies.userInfo()?.type == "vendor" {
+            btnReject.isHidden = siteDetail?.vendor_status == "Approved"
+            btnApprove.isHidden = siteDetail?.vendor_status == "Rejected"
+            siteDetail?.vendor_status == "Approved" ? btnApprove.setTitle("Approved", for: .normal) : btnApprove.setTitle("Approve", for: .normal)
+            btnApprove.isUserInteractionEnabled = siteDetail?.vendor_status != "Approved"
+            
+            siteDetail?.vendor_status == "Rejected" ? btnReject.setTitle("Rejected", for: .normal) : btnReject.setTitle("Reject", for: .normal)
+            btnReject.isUserInteractionEnabled = siteDetail?.vendor_status != "Rejected"
+        } else if Cookies.userInfo()?.type == "rhm" {
+            btnReject.isHidden = siteDetail?.clientStatus == "Approved"
+            btnApprove.isHidden = siteDetail?.clientStatus == "Rejected"
+            siteDetail?.clientStatus == "Approved" ? btnApprove.setTitle("Approved", for: .normal) : btnApprove.setTitle("Approve", for: .normal)
+            btnApprove.isUserInteractionEnabled = siteDetail?.clientStatus != "Approved"
+            
+            siteDetail?.clientStatus == "Rejected" ? btnReject.setTitle("Rejected", for: .normal) : btnReject.setTitle("Reject", for: .normal)
+            btnReject.isUserInteractionEnabled = siteDetail?.clientStatus != "Rejected"
+        }
+        cnstHeightBottomStack.constant = Cookies.userInfo()?.type != "rhm" && Cookies.userInfo()?.type != "vendor" ? 0 : 55
+        vwStackView.isHidden = Cookies.userInfo()?.type != "rhm" && Cookies.userInfo()?.type != "vendor"
+        
         
         txtFldSiteName.text = siteDetail?.siteName
-        btnEdit.isHidden = Cookies.userInfo()?.type == "zo" || Cookies.userInfo()?.type == "asm"
+        btnEdit.isHidden = Cookies.userInfo()?.type == "zo" || Cookies.userInfo()?.type == "asm" || Cookies.userInfo()?.type == "rhm"
         txtFldnyDamage.text = siteDetail?.anyDamage
         txtFldRemarks.text = siteDetail?.remarks
         txtFldOutsourceCode.text = siteDetail?.code
@@ -114,7 +133,7 @@ class SiteDetailVC: UIViewController {
         txtFldLongitude.text = siteDetail?.longitude
         txtFldHeight.text = siteDetail?.length
         txtFldWidth.text = siteDetail?.width
-        txtFldDate.text = siteDetail?.date
+        txtFldDate.text = siteDetail?.imageLastUpdatedDate
         txtFldLocation.text = siteDetail?.location
         txtFldRecceName.text = siteDetail?.raccePersonName
         
@@ -156,12 +175,12 @@ class SiteDetailVC: UIViewController {
             arrImages.append(("\(imageBaseUrl)\(siteDetail?.image4 ?? "")"))
         }
         
-        btnReject.isHidden = ((siteDetail?.asmStatus?.range(of: "approved", options: .caseInsensitive)) != nil)
-        btnApprove.setTitle(((siteDetail?.asmStatus?.range(of: "approved", options: .caseInsensitive)) != nil) ? "Approved" : "Approve", for: .normal)
-        btnApprove.isUserInteractionEnabled = ((siteDetail?.asmStatus?.range(of: "approved", options: .caseInsensitive)) != nil) ? false : true
-        btnApprove.isHidden = ((siteDetail?.asmStatus?.range(of: "rejected", options: .caseInsensitive)) != nil)
-        btnReject.setTitle(((siteDetail?.asmStatus?.range(of: "rejected", options: .caseInsensitive)) != nil) ? "Rejected" : "Reject", for: .normal)
-        btnReject.isUserInteractionEnabled = ((siteDetail?.asmStatus?.range(of: "rejected", options: .caseInsensitive)) != nil) ? false : true
+//        btnReject.isHidden = ((siteDetail?.asmStatus?.range(of: "approved", options: .caseInsensitive)) != nil)
+//        btnApprove.setTitle(((siteDetail?.asmStatus?.range(of: "approved", options: .caseInsensitive)) != nil) ? "Approved" : "Approve", for: .normal)
+//        btnApprove.isUserInteractionEnabled = ((siteDetail?.asmStatus?.range(of: "approved", options: .caseInsensitive)) != nil) ? false : true
+//        btnApprove.isHidden = ((siteDetail?.asmStatus?.range(of: "rejected", options: .caseInsensitive)) != nil)
+//        btnReject.setTitle(((siteDetail?.asmStatus?.range(of: "rejected", options: .caseInsensitive)) != nil) ? "Rejected" : "Reject", for: .normal)
+//        btnReject.isUserInteractionEnabled = ((siteDetail?.asmStatus?.range(of: "rejected", options: .caseInsensitive)) != nil) ? false : true
         
         
         
@@ -240,24 +259,7 @@ class SiteDetailVC: UIViewController {
                         break
                     }
                 }
-//                for image in 0..<arrNewImages.count {
-//                    switch image {
-//                    case 0:
-//                        imgParam["new_image"] = arrNewImages[image]
-//                    case 1:
-//                        imgParam["new_image1"] = arrNewImages[image]
-//                    case 2:
-//                        imgParam["new_image2"] = arrNewImages[image]
-//                    case 3:
-//                        imgParam["new_image3"] = arrNewImages[image]
-//                    case 4:
-//                        imgParam["new_image4"] = arrNewImages[image]
-//                    default:
-//                        break
-//                    }
-//                }
-                
-              //  imgParam[WSRequestParams.WS_REQS_PARAM_RACCE_IMAGE] = imgVwSignature.image
+
                 
                 imgParam["new_racce_person_image"] = imgVwSecRecce.image
                 
@@ -268,6 +270,8 @@ class SiteDetailVC: UIViewController {
                             self.manageData(false)
                             self.collVwImages.reloadData()
                             self.popView()
+                            guard let esign = self.siteUpdatedDelegate else { return }
+                            esign(true)
                         } else {
                             if msg == CommonError.INTERNET {
                                 Proxy.shared.showSnackBar(message: CommonMessage.NO_INTERNET_CONNECTION)
@@ -283,6 +287,8 @@ class SiteDetailVC: UIViewController {
                             self.manageData(false)
                             self.collVwImages.reloadData()
                             self.popView()
+                            guard let esign = self.siteUpdatedDelegate else { return }
+                            esign(true)
                         } else {
                             if msg == CommonError.INTERNET {
                                 Proxy.shared.showSnackBar(message: CommonMessage.NO_INTERNET_CONNECTION)
@@ -431,8 +437,8 @@ class SiteDetailVC: UIViewController {
                 self.present(alert, animated: false, completion: nil)
             }
         }
-        
     }
+    
     @IBAction func actionRetake(_ sender: Any) {
         ImagePickerManager().openSelfieCamera(self) { image in
             self.imgVwSecRecce.image = image
@@ -473,7 +479,6 @@ extension SiteDetailVC: UICollectionViewDelegate, UICollectionViewDataSource, UI
         }
         return cell
     }
-    
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
         return CGSize(width: collectionView.frame.size.width, height: (collectionView.frame.size.height))
@@ -523,7 +528,7 @@ extension SiteDetailVC: UICollectionViewDelegate, UICollectionViewDataSource, UI
                         let givenLatLong = CLLocationCoordinate2DMake(coordinates.0, coordinates.1) // Example coordinates
                         let personLatLong = CLLocationCoordinate2D(latitude: self.currentLoc.coordinate.latitude, longitude: self.currentLoc.coordinate.longitude) // Another example
                         
-                        if self.isWithin200Meters(givenLocation: givenLatLong, personLocation: personLatLong) {
+                        //if self.isWithin200Meters(givenLocation: givenLatLong, personLocation: personLatLong) {
                             self.txtFldLatitude.text = "\(self.currentLoc.coordinate.latitude)"
                             self.txtFldLongitude.text = "\(self.currentLoc.coordinate.longitude)"
                             
@@ -536,10 +541,10 @@ extension SiteDetailVC: UICollectionViewDelegate, UICollectionViewDataSource, UI
                             self.collVwNewImages.reloadData()
                             
                             
-                            print("The person is within 200 meters.")
-                        } else {
-                            Proxy.shared.showSnackBar(message: "You are not within 200 meters of the site. Please retry!")
-                        }
+//                            print("The person is within 200 meters.")
+//                        } else {
+//                            Proxy.shared.showSnackBar(message: "You are not within 200 meters of the site. Please retry!")
+//                        }
                     } else {
                         self.arrNewImages.append((val, image))
                         self.vwSecond.isHidden = self.arrNewImages.count == 0
@@ -574,7 +579,6 @@ extension SiteDetailVC: UICollectionViewDelegate, UICollectionViewDataSource, UI
         txtFldOutsourceCode.isUserInteractionEnabled = data
         txtFldZoName.isUserInteractionEnabled = data
         txtFldAsmName.isUserInteractionEnabled = data
-        txtFldVendorName.isUserInteractionEnabled = data
         txtFldZone.isUserInteractionEnabled = data
         txtFldArea.isUserInteractionEnabled = data
         txtFldState.isUserInteractionEnabled = data
@@ -617,10 +621,24 @@ extension SiteDetailVC: UICollectionViewDelegate, UICollectionViewDataSource, UI
             Proxy.shared.showSnackBar(message: "Please enter your location")
             return false
         } 
-//        else if arrImages.count != 5 {
-//            Proxy.shared.showSnackBar(message: "There must be 5 store photos")
-//            return false
-//        }
+        else if arrNewImages.count < 3 {
+            Proxy.shared.showSnackBar(message: "There must be atleast 3 store photos")
+            return false
+        }
         return true
+    }
+}
+
+extension SiteDetailVC: UITextFieldDelegate {
+    func textFieldShouldBeginEditing(_ textField: UITextField) -> Bool {
+        
+        if textField == txtFldnyDamage {
+            self.showShortDropDown(textFeild: textField, data: self.arrAnyDamage, dropDown: dropDown) { val, index in
+                self.txtFldnyDamage.text = val
+            }
+            return false
+        } else {
+            return true
+        }
     }
 }

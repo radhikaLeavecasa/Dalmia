@@ -51,7 +51,7 @@ class ProfileVC: UIViewController {
         self.txtFldName.text = data.name != nil ? data.name : "NA"
         self.txtFldArea.text = data.area != nil ? data.area : "NA"
         self.txtFldGst.text = data.gstNo != nil ? data.gstNo : "NA"
-        self.txtFldType.text = data.type != nil ? data.type : "NA"
+        self.txtFldType.text = data.type != nil ? data.type == "rhm" ? "RMH" : "\(data.type!)" : "NA"
         self.txtFldZone.text = data.zone != nil && data.zone != "Select Zone" ? data.zone : "NA"
         self.txtFldLocation.text = data.location != nil ? data.location : "NA"
         self.txtFldPhone.text = data.phoneNumber != nil ? data.phoneNumber : "NA"
