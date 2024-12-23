@@ -57,6 +57,7 @@
 		7276F3702C8C43030097F428 /* AdminHomeVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7276F36F2C8C43030097F428 /* AdminHomeVC.swift */; };
 		7276F3722C8C46470097F428 /* VendorPanelVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7276F3712C8C46470097F428 /* VendorPanelVC.swift */; };
 		72AA8B492CCB6BBC0063866C /* ViewSiteVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 72AA8B482CCB6BBC0063866C /* ViewSiteVC.swift */; };
+		72AC7DCE2CE5D78E00432A0E /* MyLocationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 72AC7DCD2CE5D78E00432A0E /* MyLocationManager.swift */; };
 		72D1FBBC2C9D812E0054BE91 /* SiteHistoryVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 72D1FBBB2C9D812E0054BE91 /* SiteHistoryVC.swift */; };
 		72E3D1FC2C12E3AE0041929A /* SignaturePopVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 72E3D1FB2C12E3AE0041929A /* SignaturePopVC.swift */; };
 		72E3D1FF2C13150C0041929A /* OptionsCVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 72E3D1FE2C13150C0041929A /* OptionsCVC.swift */; };
@@ -148,6 +149,7 @@
 		7276F36F2C8C43030097F428 /* AdminHomeVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AdminHomeVC.swift; sourceTree = "<group>"; };
 		7276F3712C8C46470097F428 /* VendorPanelVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VendorPanelVC.swift; sourceTree = "<group>"; };
 		72AA8B482CCB6BBC0063866C /* ViewSiteVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewSiteVC.swift; sourceTree = "<group>"; };
+		72AC7DCD2CE5D78E00432A0E /* MyLocationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MyLocationManager.swift; sourceTree = "<group>"; };
 		72D1FBBB2C9D812E0054BE91 /* SiteHistoryVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SiteHistoryVC.swift; sourceTree = "<group>"; };
 		72E3D1FB2C12E3AE0041929A /* SignaturePopVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignaturePopVC.swift; sourceTree = "<group>"; };
 		72E3D1FE2C13150C0041929A /* OptionsCVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OptionsCVC.swift; sourceTree = "<group>"; };
@@ -349,6 +351,7 @@
 				72582C9B2C102CE200A4CEF1 /* ActivityIndicatorExtension */,
 				7251E5922C0F2E5C00A900CE /* WWCalendarTimeSelector */,
 				7271F5212C0DE19400372593 /* ExtensionClass.swift */,
+				72AC7DCD2CE5D78E00432A0E /* MyLocationManager.swift */,
 				7251E56C2C0EE05F00A900CE /* ViewControllerHelper.swift */,
 				72E3D2082C131E500041929A /* Cookies.swift */,
 				7251E5802C0EF2A100A900CE /* UIImagePicker.swift */,
@@ -682,6 +685,7 @@
 				7251E5A22C0F2F4D00A900CE /* Duration.swift in Sources */,
 				72EC85542C133A5D00BA6CF7 /* SiteDetailVC.swift in Sources */,
 				7251E5742C0EE3AC00A900CE /* HomeVM.swift in Sources */,
+				72AC7DCE2CE5D78E00432A0E /* MyLocationManager.swift in Sources */,
 				7251E56D2C0EE05F00A900CE /* ViewControllerHelper.swift in Sources */,
 				7276F3702C8C43030097F428 /* AdminHomeVC.swift in Sources */,
 				7251E57F2C0EEA5B00A900CE /* FetchDataModel.swift in Sources */,
@@ -887,7 +891,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 1.7;
 				DEVELOPMENT_TEAM = G96NGZCMGU;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = "Acme Vendor App/Info.plist";
@@ -907,12 +911,15 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = "Acme.Dalmia-Cement";
+				PRODUCT_BUNDLE_IDENTIFIER = com.dalmiaCement.app;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = Debug;
 		};
@@ -924,7 +931,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 1.7;
 				DEVELOPMENT_TEAM = G96NGZCMGU;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = "Acme Vendor App/Info.plist";
@@ -944,12 +951,15 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = "Acme.Dalmia-Cement";
+				PRODUCT_BUNDLE_IDENTIFIER = com.dalmiaCement.app;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = Release;
 		};

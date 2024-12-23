@@ -62,6 +62,7 @@ class AdminHomeVC: UIViewController {
         if title == "Reminder" {
             txtFldOutdoorCode.text = code
             fetchDAta()
+            MyLocationManager.shared.requestLocationAuthorization()
         }
         
         txtFldState.text = Cookies.userInfo()?.state
@@ -151,9 +152,7 @@ class AdminHomeVC: UIViewController {
     
     @IBAction func actionAddSitePhoto(_ sender: Any) {
         ImagePickerManager().openCamera(self) { [self] image in
-            self.imgVwSitePhoto.image = image
-            self.lblRetakeSitePhoto.text = "Retake Site Photograph"
-            self.lblRetakeSitePhoto.font = UIFont(name: "DMSans18pt-Black", size: 14)
+            
             if(self.locationManager.authorizationStatus == .authorizedWhenInUse ||
                self.locationManager.authorizationStatus == .authorizedAlways) {
                 self.currentLoc = self.locationManager.location
@@ -166,11 +165,17 @@ class AdminHomeVC: UIViewController {
                     if self.isWithin200Meters(givenLocation: givenLatLong, personLocation: personLatLong) {
                         self.txtFldLatitude.text = "\(self.currentLoc.coordinate.latitude)"
                         self.txtFldLongitude.text = "\(self.currentLoc.coordinate.longitude)"
+                        self.imgVwSitePhoto.image = image
+                        self.lblRetakeSitePhoto.text = "Retake Site Photograph"
+                        self.lblRetakeSitePhoto.font = UIFont(name: "DMSans18pt-Black", size: 14)
                         print("The person is within 200 meters.")
                     } else {
                         Proxy.shared.showSnackBar(message: "You are not within 200 meters of the site. Please retry!")
                     }
                 } else {
+                    self.imgVwSitePhoto.image = image
+                    self.lblRetakeSitePhoto.text = "Retake Site Photograph"
+                    self.lblRetakeSitePhoto.font = UIFont(name: "DMSans18pt-Black", size: 14)
                     self.txtFldLatitude.text = "\(self.currentLoc.coordinate.latitude)"
                     self.txtFldLongitude.text = "\(self.currentLoc.coordinate.longitude)"
                 }
@@ -257,7 +262,7 @@ class AdminHomeVC: UIViewController {
                                                  "status": "1",
                                                  "total" :"\(area)",
                                                  "site_name": txtFldSiteName.text!,
-                                                 WSRequestParams.WS_REQS_PARAM_DISTRICT : txtFldDistrict.text!,
+                                                 //WSRequestParams.WS_REQS_PARAM_DISTRICT : txtFldDistrict.text!,
                                                  WSRequestParams.WS_REQS_PARAM_STATE: txtFldState.text!,
                                                  WSRequestParams.WS_REQS_PARAM_CITY: txtFldCity.text!,
                                                  WSRequestParams.WS_REQS_PARAM_LAT : txtFldLatitude.text!,
@@ -278,23 +283,24 @@ class AdminHomeVC: UIViewController {
                                                  "vendor_id": "\(vendorId)"] as! [String:AnyObject]
                 var imgParam2: [String: UIImage]?
                 let imgParam: [String: UIImage?] = [
-                    WSRequestParams.WS_REQS_PARAM_IMAGE: imgVwSitePhoto.image,
-                    WSRequestParams.WS_REQS_PARAM_IMAGE1: imgVwStorePhoto.indices.contains(0) ? imgVwStorePhoto[0].image : nil,
-                    WSRequestParams.WS_REQS_PARAM_IMAGE2: imgVwStorePhoto.indices.contains(1) ? imgVwStorePhoto[1].image : nil,
-                    WSRequestParams.WS_REQS_PARAM_IMAGE3: imgVwStorePhoto.indices.contains(2) ? imgVwStorePhoto[2].image : nil,
-                    WSRequestParams.WS_REQS_PARAM_IMAGE4: imgVwStorePhoto.indices.contains(3) ? imgVwStorePhoto[3].image : nil
+                    "image": imgVwSitePhoto.image,
+                    "image1": imgVwStorePhoto.indices.contains(0) ? imgVwStorePhoto[0].image : nil,
+                    "image2": imgVwStorePhoto.indices.contains(1) ? imgVwStorePhoto[1].image : nil,
+                    "image3": imgVwStorePhoto.indices.contains(2) ? imgVwStorePhoto[2].image : nil,
+                    "image4": imgVwStorePhoto.indices.contains(3) ? imgVwStorePhoto[3].image : nil
                 ]
                 
                 imgParam2 = imgParam.compactMapValues { $0 }
-                let nonNilImagesCount = imgParam.compactMap { $0 }.count
+                let nonNilImagesCount = (imgParam2?.compactMap { $0 }.count) ?? 0
                 if nonNilImagesCount < 3 {
-                    Proxy.shared.showSnackBar(message: "Add atleast 3 store images")
+                    Proxy.shared.showSnackBar(message: "Add atleast 3 site images")
                 } else {
                     imgParam2?[WSRequestParams.WS_REQS_PARAM_RACCE_IMAGE] = imgVwOwnerSignature.image
                     viewModel.uploadSiteDetails(param: param, dictImage: imgParam2 ?? [:]) { val, msg in
                         if val {
                             Proxy.shared.showSnackBar(message: msg)
-                            self.resetData()
+                           // self.resetData()
+                            self.popView()
                         } else {
                             if msg == CommonError.INTERNET {
                                 Proxy.shared.showSnackBar(message: CommonMessage.NO_INTERNET_CONNECTION)
@@ -317,7 +323,35 @@ class AdminHomeVC: UIViewController {
         
         let distance = givenCLLocation.distance(from: personCLLocation)
         
-        return distance <= 200.0 // distance is in meters
+        return distance <= 20000.0 // distance\
+        self.imgVwSitePhoto.image = nil
+        self.imgVwStorePhoto[0].image = nil
+        self.imgVwStorePhoto[1].image = nil
+        self.imgVwStorePhoto[2].image = nil
+        self.imgVwStorePhoto[3].image = nil
+        self.imgVwOwnerSignature.image = nil
+        
+        self.cnstHeightStorePhoto1.constant = 40
+        self.cnstHeightStorePhoto2.constant = 40
+        self.cnstHeightStorePhoto3.constant = 40
+        self.cnstHeightStorePhoto4.constant = 40
+        self.cnstHeightSignatureOfOwner.constant = 40
+        
+        self.btnStorePhoto[0].setTitle("Far Shot", for: .normal)
+        self.btnStorePhoto[1].setTitle("Near Shot", for: .normal)
+        self.btnStorePhoto[2].setTitle("Left Angle", for: .normal)
+        self.btnStorePhoto[3].setTitle("Right Angle", for: .normal)
+        self.btnOwnerSignature.setTitle("Your Selfie", for: .normal)
+        self.lblRetakeSitePhoto.text = "Add Site Photograph"
+        
+        self.btnOwnerSignature.titleLabel?.font = UIFont(name: "DMSans24pt-Regular", size: 14)
+        self.btnStorePhoto[0].titleLabel?.font = UIFont(name: "DMSans24pt-Regular", size: 14)
+        self.btnStorePhoto[1].titleLabel?.font = UIFont(name: "DMSans24pt-Regular", size: 14)
+        self.btnStorePhoto[2].titleLabel?.font = UIFont(name: "DMSans24pt-Regular", size: 14)
+        self.btnStorePhoto[3].titleLabel?.font = UIFont(name: "DMSans24pt-Regular", size: 14)
+        // self.lblRetakeSitePhoto.font = UIFont(name: "DMSans24pt-Regular", size: 14)
+        txtFldVendorName.text = ""
+        txtFldZone.text = ""
     }
     
     func resetData(){
@@ -381,10 +415,12 @@ class AdminHomeVC: UIViewController {
         } else if txtFldState.text?.isEmptyCheck() == true {
             Proxy.shared.showSnackBar(message: CommonMessage.ENTER_STATE)
             return false
-        } else if txtFldDistrict.text?.isEmptyCheck() == true {
-            Proxy.shared.showSnackBar(message: CommonMessage.ENTER_DISTRICT)
-            return false
-        } else if txtFldCity.text?.isEmptyCheck() == true {
+        } 
+//        else if txtFldDistrict.text?.isEmptyCheck() == true {
+//            Proxy.shared.showSnackBar(message: CommonMessage.ENTER_DISTRICT)
+//            return false
+//        } 
+        else if txtFldCity.text?.isEmptyCheck() == true {
             Proxy.shared.showSnackBar(message: CommonMessage.ENTER_CITY)
             return false
         } else if txtFldZone.text?.isEmptyCheck() == true {
@@ -405,27 +441,11 @@ class AdminHomeVC: UIViewController {
         } else if txtFldLocation.text?.isEmptyCheck() == true {
             Proxy.shared.showSnackBar(message: CommonMessage.ENTER_RECCE_LOCATION)
             return false
-        }
-        //else if txtFldLocation.text?.isEmptyCheck() == true {
-        //            Proxy.shared.showSnackBar(message: CommonMessage.ENTER_LOCATION)
-        //            return false
-        //        } else if imgVwSitePhoto.image == nil {
-        //            Proxy.shared.showSnackBar(message: CommonMessage.ADD_SITE_PHOTO)
-        //            return false
-        //        }
-        //        else if imgVwStorePhoto[0].image == nil {
-        //            Proxy.shared.showSnackBar(message: CommonMessage.ADD_STORE_PHOTO1)
-        //            return false
-        //        } else if imgVwStorePhoto[1].image == nil {
-        //            Proxy.shared.showSnackBar(message: CommonMessage.ADD_STORE_PHOTO2)
-        //            return false
-        //        } else if imgVwStorePhoto[2].image == nil {
-        //            Proxy.shared.showSnackBar(message: CommonMessage.ADD_STORE_PHOTO3)
-        //            return false
-        //        } else if imgVwStorePhoto[3].image == nil {
-        //            Proxy.shared.showSnackBar(message: CommonMessage.ADD_STORE_PHOTO4)
-        //            return false
-        //        }
+        } 
+//        else if imgVwStorePhoto.count < 3 {
+//            Proxy.shared.showSnackBar(message: "There must be atleast 3 site photos")
+//            return false
+//        } 
         else if imgVwOwnerSignature.image == nil {
             Proxy.shared.showSnackBar(message: CommonMessage.ADD_SIGNATURE_OF_OWNER)
             return false
@@ -445,6 +465,9 @@ extension AdminHomeVC: UITextFieldDelegate{
             if txtFldHeight.text != "" && txtFldWidth.text != "" {
                 txtFldSqFt.text = "\(Double((Double(txtFldHeight.text!) ?? 0.0)*(Double(txtFldWidth.text!) ?? 0.0)))"
             }
+        } else if textField == txtFldSiteName {
+            txtFldLocation.text = txtFldSiteName.text
+            txtFldLocation.isUserInteractionEnabled = false
         }
     }
 

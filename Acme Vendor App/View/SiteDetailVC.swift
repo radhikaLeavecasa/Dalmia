@@ -13,6 +13,7 @@ import CoreLocation
 
 class SiteDetailVC: UIViewController {
     //MARK: - @IBOutlets
+    @IBOutlet weak var btnRetake: UIButton!
     @IBOutlet weak var btnRetakeSelfie: UIButton!
     @IBOutlet weak var collVwNewImages: UICollectionView!
     @IBOutlet weak var imgVwSecRecce: UIImageView!
@@ -69,6 +70,7 @@ class SiteDetailVC: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         setData()
+        MyLocationManager.shared.requestLocationAuthorization()
     }
     //MARK: - Custom method
     func setData(){
@@ -116,7 +118,10 @@ class SiteDetailVC: UIViewController {
         
         
         txtFldSiteName.text = siteDetail?.siteName
-        btnEdit.isHidden = Cookies.userInfo()?.type == "zo" || Cookies.userInfo()?.type == "asm" || Cookies.userInfo()?.type == "rhm"
+        txtFldLocation.text = siteDetail?.siteName
+        txtFldLocation.isUserInteractionEnabled = false
+        btnEdit.isHidden = Cookies.userInfo()?.type == "zo" || Cookies.userInfo()?.type == "asm" || Cookies.userInfo()?.type == "client"
+        txtFldRecceName.text = siteDetail?.new_racce_person_name != "" && siteDetail?.new_racce_person_name != nil ? siteDetail?.new_racce_person_name : siteDetail?.raccePersonName
         txtFldnyDamage.text = siteDetail?.anyDamage
         txtFldRemarks.text = siteDetail?.remarks
         txtFldOutsourceCode.text = siteDetail?.code
@@ -135,8 +140,7 @@ class SiteDetailVC: UIViewController {
         txtFldWidth.text = siteDetail?.width
         txtFldDate.text = siteDetail?.imageLastUpdatedDate
         txtFldLocation.text = siteDetail?.location
-        txtFldRecceName.text = siteDetail?.raccePersonName
-        
+
         if siteDetail?.raccePersonImage != "" && siteDetail?.raccePersonImage != nil {
             imgVwSignature.sd_setImage(with: URL(string: "\(imageBaseUrl)\(siteDetail?.raccePersonImage ?? "")"), placeholderImage: .placeholderImage())
         } else {
@@ -215,6 +219,8 @@ class SiteDetailVC: UIViewController {
                                                  "zo_name": txtFldZoName.text!,
                                                  "status": "1",
                                                  "total" :"\(area)",
+                                                 "site_name": txtFldSiteName.text!,
+                                                 "user_type": "\(Cookies.userInfo()?.type ?? "")",
                                                  WSRequestParams.WS_REQS_PARAM_DISTRICT : txtFldDistrict.text!,
                                                  WSRequestParams.WS_REQS_PARAM_STATE: txtFldState.text!,
                                                  WSRequestParams.WS_REQS_PARAM_CITY: txtFldCity.text!,
@@ -228,7 +234,8 @@ class SiteDetailVC: UIViewController {
                                                  WSRequestParams.WS_REQS_PARAM_CREATED_BY: "\(Cookies.userInfo()?.id ?? 0)",
                                                  WSRequestParams.WS_REQS_PARAM_AREA: txtFldArea.text!,
                                                  WSRequestParams.WS_REQS_PARAM_ASM_NAME: txtFldAsmName.text!,
-                                                 WSRequestParams.WS_REQS_PARAM_RACCE_NAME: txtFldRecceName.text!,
+                                                 "new_racce_person_name": txtFldRecceName.text!,
+                                                 WSRequestParams.WS_REQS_PARAM_RACCE_NAME: (siteDetail?.raccePersonName != "" && siteDetail?.raccePersonName != nil ? siteDetail?.raccePersonName : (txtFldRecceName.text ?? "")) ?? "",
                                                  WSRequestParams.WS_REQS_PARAM_LOCATION: txtFldLocation.text!,
                                                  
                                                  WSRequestParams.WS_REQS_PARAM_CODE:txtFldOutsourceCode.text!,
@@ -243,15 +250,15 @@ class SiteDetailVC: UIViewController {
                         }
                     case 2:
                         if arrNewImages[image].0 == "Near Shot" {
-                            imgParam["new_image"] = arrNewImages[image].1
+                            imgParam["new_image1"] = arrNewImages[image].1
                         }
                     case 3:
                         if arrNewImages[image].0 == "Left Shot" {
-                            imgParam["new_image"] = arrNewImages[image].1
+                            imgParam["new_image2"] = arrNewImages[image].1
                         }
                     case 4:
                         if arrNewImages[image].0 == "Right Shot" {
-                            imgParam["new_image"] = arrNewImages[image].1
+                            imgParam["new_image3"] = arrNewImages[image].1
                         }
                     case 0:
                         imgParam["new_image4"] = arrNewImages[image].1
@@ -262,7 +269,8 @@ class SiteDetailVC: UIViewController {
 
                 
                 imgParam["new_racce_person_image"] = imgVwSecRecce.image
-                
+                debugPrint(imgParam)
+                debugPrint(param)
                 if imgParam.count != 0 {
                     viewModel.updateSiteDetails(id: siteDetail?.id ?? 0, param: param, dictImage: imgParam) { val, msg in
                         if val {
@@ -330,7 +338,7 @@ class SiteDetailVC: UIViewController {
                                               style: UIAlertAction.Style.default,
                                               handler: {(_: UIAlertAction!) in
                     
-                    self.viewModel.acceptRejectApi(.vendorAcceptReject("\(self.siteDetail?.id ?? 0)", createdBy: "\(Cookies.userInfo()?.id ?? 0)", status: "Accepted"), param: [:]) { val, msg in
+                    self.viewModel.acceptRejectApi(.vendorAcceptReject("\(self.siteDetail?.id ?? 0)", createdBy: "\(Cookies.userInfo()?.id ?? 0)", status: "Approved"), param: [:]) { val, msg in
                         if val {
                             let alert = UIAlertController(title: "", message: CommonMessage.APPROVED_SUCCESSFULLY, preferredStyle: .alert)
                             alert.addAction(UIAlertAction(title: "OK", style: UIAlertAction.Style.default, handler: { _ in
@@ -389,7 +397,7 @@ class SiteDetailVC: UIViewController {
                                               style: UIAlertAction.Style.default,
                                               handler: {(_: UIAlertAction!) in
                     
-                    self.viewModel.acceptRejectApi(.clientAcceptReject("\(self.siteDetail?.id ?? 0)", createdBy: "\(Cookies.userInfo()?.id ?? 0)", status: "Accepted"), param: [:]) { val, msg in
+                    self.viewModel.acceptRejectApi(.clientAcceptReject("\(self.siteDetail?.id ?? 0)", createdBy: "\(Cookies.userInfo()?.id ?? 0)", status: "Approved"), param: [:]) { val, msg in
                         if val {
                             let alert = UIAlertController(title: "", message: CommonMessage.APPROVED_SUCCESSFULLY, preferredStyle: .alert)
                             alert.addAction(UIAlertAction(title: "OK", style: UIAlertAction.Style.default, handler: { _ in
@@ -436,6 +444,66 @@ class SiteDetailVC: UIViewController {
                 }))
                 self.present(alert, animated: false, completion: nil)
             }
+        } else if Cookies.userInfo()?.type == "rhm" {
+            switch sender.tag {
+            case 0:
+                let alert = UIAlertController(title: "Dalmia", message: CommonMessage.APPROVE_DETAILS, preferredStyle: .alert)
+                alert.addAction(UIAlertAction(title: CommonMessage.CANCEL, style: UIAlertAction.Style.default, handler: { _ in
+                }))
+                alert.addAction(UIAlertAction(title: CommonMessage.APPROVE,
+                                              style: UIAlertAction.Style.default,
+                                              handler: {(_: UIAlertAction!) in
+                    let param = ["city_head_status": "Approved",
+                                 "city_head_approver_id": "\(Cookies.userInfo()?.id ?? 0)"] as [String: AnyObject]
+                    self.viewModel.acceptRejectApi(.cityHeadPostStatus, param: param, { val, msg in
+                        if val {
+                            let alert = UIAlertController(title: "", message: CommonMessage.APPROVED_SUCCESSFULLY, preferredStyle: .alert)
+
+                            alert.addAction(UIAlertAction(title: "OK", style: UIAlertAction.Style.default, handler: { _ in
+                                self.popView()
+                            }))
+                            DispatchQueue.main.async {
+                                self.present(alert, animated: false, completion: nil)
+                            }
+                        } else {
+                            if msg == CommonError.INTERNET {
+                                Proxy.shared.showSnackBar(message: CommonMessage.NO_INTERNET_CONNECTION)
+                            } else {
+                                Proxy.shared.showSnackBar(message: msg)
+                            }
+                        }
+                    })
+                }))
+                self.present(alert, animated: false, completion: nil)
+            default:
+                let alert = UIAlertController(title: "Dalmia", message: CommonMessage.REJECT_DETAILS, preferredStyle: .alert)
+                alert.addAction(UIAlertAction(title: CommonMessage.CANCEL, style: UIAlertAction.Style.default, handler: { _ in
+                }))
+                alert.addAction(UIAlertAction(title: CommonMessage.REJECT,
+                                              style: UIAlertAction.Style.default,
+                                              handler: {(_: UIAlertAction!) in
+                    let param = ["city_head_status": "Rejected",
+                                 "city_head_approver_id": "\(Cookies.userInfo()?.id ?? 0)"] as [String: AnyObject]
+                    self.viewModel.acceptRejectApi(.cityHeadPostStatus, param: param, { val, msg in
+                        if val {
+                            let alert = UIAlertController(title: "", message: CommonMessage.REJECTED_SUCCESS, preferredStyle: .alert)
+                            alert.addAction(UIAlertAction(title: "OK", style: UIAlertAction.Style.default, handler: { _ in
+                                self.popView()
+                            }))
+                            DispatchQueue.main.async {
+                                self.present(alert, animated: false, completion: nil)
+                            }
+                        } else {
+                            if msg == CommonError.INTERNET {
+                                Proxy.shared.showSnackBar(message: CommonMessage.NO_INTERNET_CONNECTION)
+                            } else {
+                                Proxy.shared.showSnackBar(message: msg)
+                            }
+                        }
+                    })
+                }))
+                self.present(alert, animated: false, completion: nil)
+            }
         }
     }
     
@@ -454,6 +522,59 @@ class SiteDetailVC: UIViewController {
         
         return (latitude, longitude)
     }
+    
+    @IBAction func actionRetakeImages(_ sender: UIButton) {
+        
+        let vc = ViewControllerHelper.getViewController(ofType: .ImagesOptionsVC, StoryboardName: .Main) as! ImagesOptionsVC
+        vc.images = self.arrNewImages
+        vc.imgTypeDelegate = {
+            val in
+            
+            ImagePickerManager().openCamera(self) { image in
+                
+                if (self.locationManager.authorizationStatus == .authorizedWhenInUse ||
+                   self.locationManager.authorizationStatus == .authorizedAlways) {
+                    
+                    self.currentLoc = self.locationManager.location
+                    
+                    if let coordinates = self.convertStringToCLLocationDegrees(latitudeString: self.siteDetail?.latitude ?? "", longitudeString: self.siteDetail?.longitude ?? "") {
+                        
+                        let givenLatLong = CLLocationCoordinate2DMake(coordinates.0, coordinates.1) // Example coordinates
+                        let personLatLong = CLLocationCoordinate2D(latitude: self.currentLoc.coordinate.latitude, longitude: self.currentLoc.coordinate.longitude) // Another example
+                        
+                        if self.isWithin200Meters(givenLocation: givenLatLong, personLocation: personLatLong) {
+                            self.txtFldLatitude.text = "\(self.currentLoc.coordinate.latitude)"
+                            self.txtFldLongitude.text = "\(self.currentLoc.coordinate.longitude)"
+                            
+                            self.arrNewImages.append((val, image))
+                            self.vwSecond.isHidden = self.arrNewImages.count == 0
+                            self.cnstHeightImagesSec.constant = self.arrNewImages.count == 0 ? 0 : 280
+                            self.pgControlSecond.isHidden = self.arrNewImages.count == 0
+                            self.pgControlSecond.drawer = ScaleDrawer(numberOfPages: self.arrNewImages.count, height: 10, width: 10, space: 6, raduis: 10, currentItem: 0, indicatorColor: .black, dotsColor: .clear, isBordered: true, borderColor: .black, borderWidth: 1.0, indicatorBorderColor: .black, indicatorBorderWidth: 1.0)
+                            self.pgControlSecond.numberOfPages = self.arrNewImages.count
+                            self.collVwNewImages.reloadData()
+                            
+                            
+                            print("The person is within 200 meters.")
+                        } else {
+                            Proxy.shared.showSnackBar(message: "You are not within 200 meters of the site. Please retry!")
+                        }
+                    } else {
+                        self.arrNewImages.append((val, image))
+                        self.vwSecond.isHidden = self.arrNewImages.count == 0
+                        self.cnstHeightImagesSec.constant = self.arrNewImages.count == 0 ? 0 : 280
+                        self.pgControlSecond.isHidden = self.arrNewImages.count == 0
+                        self.pgControlSecond.drawer = ScaleDrawer(numberOfPages: self.arrNewImages.count, height: 10, width: 10, space: 6, raduis: 10, currentItem: 0, indicatorColor: .black, dotsColor: .clear, isBordered: true, borderColor: .black, borderWidth: 1.0, indicatorBorderColor: .black, indicatorBorderWidth: 1.0)
+                        self.pgControlSecond.numberOfPages = self.arrNewImages.count
+                        self.collVwNewImages.reloadData()
+                        self.txtFldLatitude.text = "\(self.currentLoc.coordinate.latitude)"
+                        self.txtFldLongitude.text = "\(self.currentLoc.coordinate.longitude)"
+                    }
+                }
+            }
+        }
+        self.present(vc, animated: true)
+    }
 }
 
 extension SiteDetailVC: UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
@@ -468,13 +589,13 @@ extension SiteDetailVC: UICollectionViewDelegate, UICollectionViewDataSource, UI
         if collectionView == collVwImages {
             
             cell.imgVwSite.sd_imageIndicator = SDWebImageActivityIndicator.gray
-            cell.actionRetake.isHidden = !btnEdit.isSelected
+          //  cell.actionRetake.isHidden = !btnEdit.isSelected
             cell.imgVwSite.sd_setImage(with: URL(string: "\(arrImages[indexPath.row])"), placeholderImage: .placeholderImage())
-            cell.actionRetake.addTarget(self, action: #selector(actionRetakePic), for: .touchUpInside)
-            cell.actionRetake.tag = indexPath.row
+         //   cell.actionRetake.addTarget(self, action: #selector(actionRetakePic), for: .touchUpInside)
+         //   cell.actionRetake.tag = indexPath.row
         } else {
             //cell.imgVwSite.sd_imageIndicator = SDWebImageActivityIndicator.gray
-            cell.actionRetake.isHidden = true
+          //  cell.actionRetake.isHidden = true
             cell.imgVwSite.image = arrNewImages[indexPath.row].1
         }
         return cell
@@ -509,58 +630,6 @@ extension SiteDetailVC: UICollectionViewDelegate, UICollectionViewDataSource, UI
             self.pgControlSecond.setPage(index)
         }
     }
-    @objc func actionRetakePic(_ sender: UIButton) {
-        
-        let vc = ViewControllerHelper.getViewController(ofType: .ImagesOptionsVC, StoryboardName: .Main) as! ImagesOptionsVC
-        vc.images = self.arrNewImages
-        vc.imgTypeDelegate = {
-            val in
-            
-            ImagePickerManager().openCamera(self) { image in
-                
-                
-                if(self.locationManager.authorizationStatus == .authorizedWhenInUse ||
-                   self.locationManager.authorizationStatus == .authorizedAlways) {
-                    self.currentLoc = self.locationManager.location
-                    
-                    if let coordinates = self.convertStringToCLLocationDegrees(latitudeString: self.siteDetail?.latitude ?? "", longitudeString: self.siteDetail?.longitude ?? "") {
-                        
-                        let givenLatLong = CLLocationCoordinate2DMake(coordinates.0, coordinates.1) // Example coordinates
-                        let personLatLong = CLLocationCoordinate2D(latitude: self.currentLoc.coordinate.latitude, longitude: self.currentLoc.coordinate.longitude) // Another example
-                        
-                        //if self.isWithin200Meters(givenLocation: givenLatLong, personLocation: personLatLong) {
-                            self.txtFldLatitude.text = "\(self.currentLoc.coordinate.latitude)"
-                            self.txtFldLongitude.text = "\(self.currentLoc.coordinate.longitude)"
-                            
-                            self.arrNewImages.append((val, image))
-                            self.vwSecond.isHidden = self.arrNewImages.count == 0
-                            self.cnstHeightImagesSec.constant = self.arrNewImages.count == 0 ? 0 : 280
-                            self.pgControlSecond.isHidden = self.arrNewImages.count == 0
-                            self.pgControlSecond.drawer = ScaleDrawer(numberOfPages: self.arrNewImages.count, height: 10, width: 10, space: 6, raduis: 10, currentItem: 0, indicatorColor: .black, dotsColor: .clear, isBordered: true, borderColor: .black, borderWidth: 1.0, indicatorBorderColor: .black, indicatorBorderWidth: 1.0)
-                            self.pgControlSecond.numberOfPages = self.arrNewImages.count
-                            self.collVwNewImages.reloadData()
-                            
-                            
-//                            print("The person is within 200 meters.")
-//                        } else {
-//                            Proxy.shared.showSnackBar(message: "You are not within 200 meters of the site. Please retry!")
-//                        }
-                    } else {
-                        self.arrNewImages.append((val, image))
-                        self.vwSecond.isHidden = self.arrNewImages.count == 0
-                        self.cnstHeightImagesSec.constant = self.arrNewImages.count == 0 ? 0 : 280
-                        self.pgControlSecond.isHidden = self.arrNewImages.count == 0
-                        self.pgControlSecond.drawer = ScaleDrawer(numberOfPages: self.arrNewImages.count, height: 10, width: 10, space: 6, raduis: 10, currentItem: 0, indicatorColor: .black, dotsColor: .clear, isBordered: true, borderColor: .black, borderWidth: 1.0, indicatorBorderColor: .black, indicatorBorderWidth: 1.0)
-                        self.pgControlSecond.numberOfPages = self.arrNewImages.count
-                        self.collVwNewImages.reloadData()
-                        self.txtFldLatitude.text = "\(self.currentLoc.coordinate.latitude)"
-                        self.txtFldLongitude.text = "\(self.currentLoc.coordinate.longitude)"
-                    }
-                }
-            }
-        }
-        self.present(vc, animated: true)
-    }
     
     func isWithin200Meters(givenLocation: CLLocationCoordinate2D, personLocation: CLLocationCoordinate2D) -> Bool {
         let givenCLLocation = CLLocation(latitude: givenLocation.latitude, longitude: givenLocation.longitude)
@@ -568,10 +637,11 @@ extension SiteDetailVC: UICollectionViewDelegate, UICollectionViewDataSource, UI
         
         let distance = givenCLLocation.distance(from: personCLLocation)
         
-        return distance <= 200.0 // distance is in meters
+        return distance <= 20000.0 // distance is in meters
     }
     
     func manageData(_ data: Bool) {
+        btnRetake.isHidden = !data
         btnRetakeSelfie.isHidden = !data
         txtFldWidth.isUserInteractionEnabled = data
         txtFldnyDamage.isUserInteractionEnabled = data
@@ -598,10 +668,12 @@ extension SiteDetailVC: UICollectionViewDelegate, UICollectionViewDataSource, UI
         } else if txtFldState.text?.isEmptyCheck() == true {
             Proxy.shared.showSnackBar(message: CommonMessage.ENTER_STATE)
             return false
-        } else if txtFldDistrict.text?.isEmptyCheck() == true {
-            Proxy.shared.showSnackBar(message: CommonMessage.ENTER_DISTRICT)
-            return false
-        } else if txtFldCity.text?.isEmptyCheck() == true {
+        } 
+//        else if txtFldDistrict.text?.isEmptyCheck() == true {
+//            Proxy.shared.showSnackBar(message: CommonMessage.ENTER_DISTRICT)
+//            return false
+//        } 
+        else if txtFldCity.text?.isEmptyCheck() == true {
             Proxy.shared.showSnackBar(message: CommonMessage.ENTER_CITY)
             return false
         } else if txtFldZone.text?.isEmptyCheck() == true {
@@ -622,7 +694,7 @@ extension SiteDetailVC: UICollectionViewDelegate, UICollectionViewDataSource, UI
             return false
         } 
         else if arrNewImages.count < 3 {
-            Proxy.shared.showSnackBar(message: "There must be atleast 3 store photos")
+            Proxy.shared.showSnackBar(message: "There must be atleast 3 site photos")
             return false
         }
         return true

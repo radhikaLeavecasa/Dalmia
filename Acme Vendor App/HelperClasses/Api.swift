@@ -39,6 +39,7 @@ enum Api: Equatable {
     case getVendorByStateCity(_ state: String, city: String)
     case vendorAcceptReject(_ projectId: String, createdBy: String, status: String)
     case clientAcceptReject(_ projectId: String, createdBy: String, status: String)
+    case getReminderCodeDetail(_ id: String)
     
     case vendorPendingSite(_ name: String)
     case vendorApprovedSite(_ name: String)
@@ -48,10 +49,48 @@ enum Api: Equatable {
     case rhmApprovedSite(_ name: String)
     case rhmRejectedSite(_ name: String)
     
-    case getReminderCodeDetail(_ id: String)
+    //State head
+    case stateHeadPendingSite(_ state: String)
+    case stateHeadApprovedSite(_ state: String)
+    case stateHeadRejectedsites(_ state: String)
+    case stateHeadsites(_ state: String)
+    case stateRhmRejectedSites(_ state: String)
+    
+    //Agency Rejected
+    case agencyRejectedRmh(_ zone: String)
+    case agencyRejectedVendor(_ name: String)
+    case agencyRejectedAsm(_ state: String)
+    
+    //City Head
+    case cityHeadAllSite(_ city: String)
+    case cityHeadPendingSite(_ city: String)
+    case cityHeadApprovedSite(_ city: String)
+    case cityHeadRejectedsites(_ city: String)
+    case cityHeadPostStatus
+    case stateHeadRejectedForCityHead(_ city: String)
+    
    
     func rawValued() -> String {
         switch self {
+        case let .cityHeadAllSite(city):
+            return "city-head-all-sites/\(city)"
+        case let .cityHeadPendingSite(city):
+            return "city-head-pending-sites/\(city)"
+        case let .cityHeadApprovedSite(city):
+            return "city-head-approved-sites/\(city)"
+        case let .cityHeadRejectedsites(city):
+            return "city-head-rejected-sites/\(city)"
+        case .cityHeadPostStatus:
+            return "state-head-approval"
+        case let .stateHeadRejectedForCityHead(city):
+            return "asm-rejected-project-for-city-head/\(city)"
+            
+        case let .agencyRejectedRmh(zone):
+            return "nodle-agency-rejected-sites-for-rmh/\(zone)"
+        case let .agencyRejectedVendor(name):
+            return "nodle-agency-rejected-sites-for-vendor/\(name)"
+        case let .agencyRejectedAsm(state):
+            return "nodle-agency-rejected-sites-for-asm/\(state)"
             
         case let .getReminderCodeDetail(id):
             return "project/\(id)"
@@ -113,6 +152,17 @@ enum Api: Equatable {
             return "update-vendor-status/\(projectId)/\(createdBy)/\(status)"
         case let .clientAcceptReject(projectId, createdBy, status):
             return "update-client-status/\(projectId)/\(createdBy)/\(status)"
+            
+        case let .stateHeadPendingSite(state):
+            return "asm-pending-project/\(state)"
+        case let .stateHeadApprovedSite(state):
+            return "asm-approved-project/\(state)"
+        case let .stateHeadRejectedsites(state):
+            return "asm-rejected-project/\(state)"
+        case let .stateHeadsites(state):
+            return "asm-project/\(state)"
+        case let .stateRhmRejectedSites(state):
+            return "rhm-state-site-rejected/\(state)"
         }
     }
 }

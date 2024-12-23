@@ -65,7 +65,7 @@ struct ListingModel: Mappable {
     var raccePersonImage: String?
     var raccePersonName: String?
     var newRaccePersonImage: String?
-    
+    var new_racce_person_name: String?
     var newImage: String?
     var newImage1: String?
     var newImage2: String?
@@ -85,7 +85,7 @@ struct ListingModel: Mappable {
         newImage2 <- map["new_image2"]
         newImage3 <- map["new_image3"]
         newImage4 <- map["new_image4"]
-        
+        new_racce_person_name <- map["new_racce_person_name"]
         newRaccePersonImage <- map["new_racce_person_image"]
         raccePersonImage <- map["racce_person_image"]
         raccePersonName <- map["racce_person_name"]

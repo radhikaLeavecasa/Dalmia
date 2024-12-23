@@ -29,6 +29,11 @@ extension NSDictionary {
         return type
     }
     
+    var city:String{
+        let type = self["city"] as? String ?? ""
+        return type
+    }
+    
     var area:String{
         let type = self["area"] as? String ?? ""
         return type

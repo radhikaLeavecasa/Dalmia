@@ -9,7 +9,6 @@ import UIKit
 
 class SiteImagesXIB: UICollectionViewCell {
 
-    @IBOutlet weak var actionRetake: UIButton!
     @IBOutlet weak var imgVwSite: UIImageView!
   
 }
